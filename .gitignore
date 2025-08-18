@@ -1,0 +1,4 @@
+ollama
+.venv
+.env
+__pycache__
