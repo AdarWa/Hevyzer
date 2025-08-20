@@ -8,6 +8,7 @@ from flask import url_for
 
 STRAVA_CLIENT_ID = os.getenv("STRAVA_CLIENT_ID", "0")
 STRAVA_CLIENT_SECRET = os.getenv("STRAVA_CLIENT_SECRET", "")
+STRAVA_VERIFY_TOKEN = os.getenv("STRAVA_VERIFY_TOKEN", "VERIFY_TOKEN")
 
 def get_strava_client(access: StravaAccess):
     client = Client(
@@ -35,12 +36,14 @@ def exchange_token(code: str) -> Client:
     client.access_token = auth_info["access_token"]
     client.refresh_token = auth_info["refresh_token"]
     client.token_expires = auth_info["expires_at"]
+    client.create_subscription(int(STRAVA_CLIENT_ID), STRAVA_CLIENT_SECRET, url_for("auth.webhook_callback", _external=True), STRAVA_VERIFY_TOKEN)
     return client
 
 def get_auth_url():
     client = Client()
     url = client.authorization_url(
         client_id=int(STRAVA_CLIENT_ID),
-        redirect_uri=url_for("auth.auth_strava", _external=True)
+        redirect_uri=url_for("auth.auth_strava", _external=True),
+        scope=["read","activity:read_all"]
     )
     return url

@@ -4,6 +4,7 @@ import auth.models as models
 import os
 
 app = Flask(__name__)
+app.config['SERVER_NAME'] = 'cardinal-amazing-antelope.ngrok-free.app' 
 
 
 STRAVA_CLIENT_ID = os.getenv("STRAVA_CLIENT_ID", "")
@@ -22,4 +23,4 @@ app.register_blueprint(routes_bp)
 app.register_blueprint(auth_bp, url_prefix="/auth")
 
 def run():
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True, threaded=True)
