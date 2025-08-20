@@ -1,34 +1,33 @@
-from typing import Optional, cast
+from typing import cast
 from stravalib.client import Client
-from .models import StravaAccount
-from server import db
+from .models import StravaAccess
 import os
+from auth.models import config
 from stravalib.protocol import AccessInfo
 from flask import url_for
 
 STRAVA_CLIENT_ID = os.getenv("STRAVA_CLIENT_ID", "0")
 STRAVA_CLIENT_SECRET = os.getenv("STRAVA_CLIENT_SECRET", "")
 
-def get_strava_client(account: StravaAccount):
+def get_strava_client(access: StravaAccess):
     client = Client(
-        access_token=account.access_token,
-        refresh_token=account.refresh_token,
-        token_expires=account.expires_at
+        access_token=access.access_token,
+        refresh_token=access.refresh_token,
+        token_expires=access.token_expires
     )
     return client
 
-def get_strava_account(user_id: int) -> StravaAccount | None:
-    account = StravaAccount.query.filter_by(user_id=user_id).first()
-    if not account:
-        return None
-    return cast(StravaAccount,account)
 
-def validate_tokens(client: Client,account: StravaAccount):
-    if account.access_token != client.access_token:
-        account.access_token = client.access_token
-        account.refresh_token = client.refresh_token
-        account.expires_at = client.token_expires
-        db.session.commit()
+def validate_tokens(client: Client,access: StravaAccess):
+    assert client.access_token
+    assert client.refresh_token
+    assert client.token_expires
+    if access.access_token != client.access_token:
+        access.access_token = client.access_token
+        access.refresh_token = client.refresh_token
+        access.token_expires = client.token_expires
+        config.save()
+        
 
 def exchange_token(code: str) -> Client:
     client = Client()
