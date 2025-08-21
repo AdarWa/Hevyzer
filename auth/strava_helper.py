@@ -2,7 +2,7 @@ from typing import cast
 from stravalib.client import Client
 from .models import Config, StravaAccess
 import os
-from auth.models import config
+import auth.models as models
 from stravalib.protocol import AccessInfo
 from flask import url_for
 
@@ -11,8 +11,6 @@ STRAVA_CLIENT_SECRET = os.getenv("STRAVA_CLIENT_SECRET", "")
 STRAVA_VERIFY_TOKEN = os.getenv("STRAVA_VERIFY_TOKEN", "VERIFY_TOKEN")
 
 def get_strava_client(access: StravaAccess):
-    global config
-    config = Config.load()
     client = Client(
         access_token=access.access_token,
         refresh_token=access.refresh_token,
@@ -25,13 +23,11 @@ def validate_tokens(client: Client,access: StravaAccess):
     assert client.access_token
     assert client.refresh_token
     assert client.token_expires
-    global config
-    config = Config.load()
     if access.access_token != client.access_token:
         access.access_token = client.access_token
         access.refresh_token = client.refresh_token
         access.token_expires = client.token_expires
-        config.save()
+        models.config.save()
         
 
 def exchange_token(code: str) -> Client:

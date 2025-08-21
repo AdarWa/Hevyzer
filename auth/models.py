@@ -58,7 +58,3 @@ class Config(BaseModel):
         self.strava_access.token_expires = token_expires
 
 config = Config()
-
-def load_config():
-    global config
-    config = Config.load()

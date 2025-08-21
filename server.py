@@ -3,7 +3,6 @@ from pathlib import Path
 from flask import Flask
 import auth.models as models
 import auth.strava_helper as strava
-from auth.models import config
 import os
 from tasks.background import scheduler
 import tasks.strava_task as strava_task

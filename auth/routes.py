@@ -1,7 +1,7 @@
 from typing import cast
 from flask import Blueprint, redirect, url_for, request, jsonify
 from . import strava_helper as strava
-from auth.models import config
+import auth.models as models
 from stravalib.exc import Fault
 from os import getenv
 from tasks.background import scheduler
@@ -19,7 +19,7 @@ def connect_strava():
 def auth_strava():
     code = request.args.get("code", "")
     client = strava.exchange_token(code)
-    access = config.strava_access
+    access = models.config.strava_access
     athlete = client.get_athlete()
     if not athlete.id:
         return jsonify({"error": "null athlete id"}), 500
@@ -30,7 +30,7 @@ def auth_strava():
         if "already exists" not in str(e):
             return "Internal Server Error", 500
     strava.validate_tokens(client, access)
-    config.save()
+    models.config.save()
     return redirect(url_for("routes.dashboard"))
     
 # TODO: Add rate limiting
@@ -40,14 +40,14 @@ def webhook_callback():
         flattend = {k: v for k, v in request.args.items()}
         response = None
         try:
-            response = jsonify(strava.get_strava_client(config.strava_access).handle_subscription_callback(flattend,STRAVA_VERIFY_TOKEN))
+            response = jsonify(strava.get_strava_client(models.config.strava_access).handle_subscription_callback(flattend,STRAVA_VERIFY_TOKEN))
         except:
             return "Already exists."
         return response
     elif request.method == "POST":
         hook = cast(dict,request.json)
         if hook.get("aspect_type", "") == "create":
-            if hook.get("owner_id", -1) == config.strava_access.strava_id:
+            if hook.get("owner_id", -1) == models.config.strava_access.strava_id:
                 scheduler.add_job(fetch_strava, "date")
         return "OK", 200
     else:
