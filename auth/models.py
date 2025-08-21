@@ -11,6 +11,7 @@ class StravaAccess(BaseModel):
     access_token: str = ""
     refresh_token: str = ""
     token_expires: int = 0
+    strava_id: int = 0
 
     def is_expired(self, current_time: int) -> bool:
         """Check if the access token has expired given the current timestamp."""
@@ -19,13 +20,16 @@ class StravaAccess(BaseModel):
     def validate_access(self) -> bool:
         """Check if the credentials are valid"""
         return self.access_token != "" and self.refresh_token != "" and self.token_expires > 0
+    
+class Report(BaseModel):
+    activity_id: int
+    
 
 
 class Config(BaseModel):
     strava_access: StravaAccess = StravaAccess()
     emails: List[str] = []
     poll_time_minutes: int = 5
-
 
     def save(self, filepath: str | Path = CONFIG_PATH) -> None:
         """Save configuration to a JSON file."""
@@ -44,6 +48,8 @@ class Config(BaseModel):
     @classmethod
     def get_default_config(cls):
         return cls()
+    
+    
 
     def update_strava_tokens(self, access_token: str, refresh_token: str, token_expires: int) -> None:
         """Update Strava tokens in place."""
@@ -52,3 +58,7 @@ class Config(BaseModel):
         self.strava_access.token_expires = token_expires
 
 config = Config()
+
+def load_config():
+    global config
+    config = Config.load()
