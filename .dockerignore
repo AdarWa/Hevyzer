@@ -1,3 +1,4 @@
 ollama
 .venv
 __pycache__
+tunnel.sh

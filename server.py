@@ -13,11 +13,12 @@ STRAVA_CLIENT_ID = os.getenv("STRAVA_CLIENT_ID", "")
 STRAVA_CLIENT_SECRET = os.getenv("STRAVA_CLIENT_SECRET", "")
 STRAVA_REDIRECT_URI = os.getenv("STRAVA_REDIRECT_URI", "")
 CONFIG_PATH =str( os.getenv("CONFIG_PATH"))
+EXTERNAL_DOMAIN = os.getenv("EXTERNAL_DOMAIN", "")
 
 
 def run():
     app = Flask(__name__)
-    app.config['SERVER_NAME'] = 'cardinal-amazing-antelope.ngrok-free.app' 
+    app.config['SERVER_NAME'] = EXTERNAL_DOMAIN 
 
     from routes import bp as routes_bp
     from auth.routes import bp as auth_bp

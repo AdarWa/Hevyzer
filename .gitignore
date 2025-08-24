@@ -3,3 +3,5 @@ ollama
 .env
 __pycache__
 config.json
+tunnel.sh
+reports.json

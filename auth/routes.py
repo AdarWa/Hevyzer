@@ -28,6 +28,7 @@ def auth_strava():
         strava.create_subscription(client)
     except Fault as e:
         if "already exists" not in str(e):
+            print(str(e))
             return "Internal Server Error", 500
     strava.validate_tokens(client, access)
     models.config.save()
@@ -41,7 +42,7 @@ def webhook_callback():
         response = None
         try:
             response = jsonify(strava.get_strava_client(models.config.strava_access).handle_subscription_callback(flattend,STRAVA_VERIFY_TOKEN))
-        except:
+        except Exception as e:
             return "Already exists."
         return response
     elif request.method == "POST":

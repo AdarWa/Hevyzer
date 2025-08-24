@@ -6,6 +6,7 @@ import json
 from os import getenv
 
 CONFIG_PATH = str(getenv("CONFIG_PATH"))
+REPORTS_PATH = str(getenv("REPORTS_PATH"))
 
 class StravaAccess(BaseModel):
     access_token: str = ""
@@ -20,9 +21,28 @@ class StravaAccess(BaseModel):
     def validate_access(self) -> bool:
         """Check if the credentials are valid"""
         return self.access_token != "" and self.refresh_token != "" and self.token_expires > 0
+
+class Exercise(BaseModel):
+    name: str
+    sets: List[Set] = []
+
+class Set(BaseModel):
+    reps: int
+    weight: float
+    volume: float
+    progressive_overload: ProgressiveOverload
+
+class ProgressiveOverload(BaseModel):
+    last_volume: float = 0
+    current_volume: float = 0
+    last_reps: int = 0
+    current_reps: int = 0
+    last_weight: float = 0
+    current_weight: float = 0
     
 class Report(BaseModel):
     activity_id: int
+    exercises: List[Exercise] = []
     
 
 
@@ -30,6 +50,7 @@ class Config(BaseModel):
     strava_access: StravaAccess = StravaAccess()
     emails: List[str] = []
     poll_time_minutes: int = 5
+    hevy_identification: str = "Logged with Hevy"
 
     def save(self, filepath: str | Path = CONFIG_PATH) -> None:
         """Save configuration to a JSON file."""
@@ -56,5 +77,27 @@ class Config(BaseModel):
         self.strava_access.access_token = access_token
         self.strava_access.refresh_token = refresh_token
         self.strava_access.token_expires = token_expires
+        
+class Reports(BaseModel):
+    reports: List[Report] = []
+    
+    def save(self, filepath: str | Path = CONFIG_PATH) -> None:
+        """Save reports to a JSON file."""
+        path = Path(filepath)
+        path.write_text(self.model_dump_json(indent=2))
+
+    @classmethod
+    def load(cls, filepath: str | Path = CONFIG_PATH) -> Reports:
+        """Load reports from a JSON file."""
+        path = Path(filepath)
+        if not path.exists():
+            raise FileNotFoundError(f"Reports file not found: {filepath}")
+        data = json.loads(path.read_text())
+        return cls(**data)
+
+    @classmethod
+    def get_default_reports(cls):
+        return cls()
 
 config = Config()
+reports = Reports()
