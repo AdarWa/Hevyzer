@@ -30,6 +30,7 @@ class Set(BaseModel):
     reps: int
     weight: float
     volume: float
+    set_type: str
     progressive_overload: ProgressiveOverload
 
 class ProgressiveOverload(BaseModel):
@@ -39,9 +40,24 @@ class ProgressiveOverload(BaseModel):
     current_reps: int = 0
     last_weight: float = 0
     current_weight: float = 0
+
+    # Keep history of last 20 workouts
+    history: list[dict] = []
+
+    def add_to_history(self):
+        self.history.append({
+            "weight": self.current_weight,
+            "reps": self.current_reps,
+            "volume": self.current_volume
+        })
+        # Truncate to last 20
+        self.history = self.history[-20:]
+
     
 class Report(BaseModel):
     activity_id: int
+    notes: str
+    name: str
     exercises: List[Exercise] = []
     
 
@@ -51,6 +67,7 @@ class Config(BaseModel):
     emails: List[str] = []
     poll_time_minutes: int = 5
     hevy_identification: str = "Logged with Hevy"
+    progressive_overload_truncation: int = 20
 
     def save(self, filepath: str | Path = CONFIG_PATH) -> None:
         """Save configuration to a JSON file."""
@@ -81,13 +98,13 @@ class Config(BaseModel):
 class Reports(BaseModel):
     reports: List[Report] = []
     
-    def save(self, filepath: str | Path = CONFIG_PATH) -> None:
+    def save(self, filepath: str | Path = REPORTS_PATH) -> None:
         """Save reports to a JSON file."""
         path = Path(filepath)
         path.write_text(self.model_dump_json(indent=2))
 
     @classmethod
-    def load(cls, filepath: str | Path = CONFIG_PATH) -> Reports:
+    def load(cls, filepath: str | Path = REPORTS_PATH) -> Reports:
         """Load reports from a JSON file."""
         path = Path(filepath)
         if not path.exists():
