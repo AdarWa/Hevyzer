@@ -6,7 +6,7 @@ from openai import OpenAI
 import markdown
 from mailer import Mailer
 import auth.models as models
-client = OpenAI(api_key=getenv("LLM_API_KEY", "ollama"), base_url=getenv("LLM_BASE_URL","http://192.168.1.55:8080/v1"))
+client = OpenAI(api_key=getenv("LLM_API_KEY", "ollama"), base_url=getenv("LLM_BASE_URL","http://192.168.1.55:8080/api"))
 
 def analyze_report(report: Report, model: str = "deepseek-coder-v2:16b") -> str: # mistral:7b-instruct-q4_K_M for testing
     workout_text = report_to_text(report)
