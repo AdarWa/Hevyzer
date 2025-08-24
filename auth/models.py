@@ -71,7 +71,7 @@ class Config(BaseModel):
     hevy_identification: str = "Logged with Hevy"
     progressive_overload_truncation: int = 20
     model: str = "mistral:7b-instruct-q4_K_M"
-    measures = Measures()
+    measures: Measures = Measures()
 
     def save(self, filepath: str | Path = CONFIG_PATH) -> None:
         """Save configuration to a JSON file."""
