@@ -21,6 +21,9 @@ The trainee measures are:
 Bodyweight: {models.config.measures.bodyweight}kg
 Age: {models.config.measures.age}y 
 
+Workout Notes:
+{report.notes}
+
 Workout Report:
 {workout_text}
 
