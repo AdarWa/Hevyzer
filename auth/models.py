@@ -60,7 +60,9 @@ class Report(BaseModel):
     name: str
     exercises: List[Exercise] = []
     
-
+class Measures(BaseModel):
+    age: int = 16
+    bodyweight: int = 47 # kg
 
 class Config(BaseModel):
     strava_access: StravaAccess = StravaAccess()
@@ -68,6 +70,8 @@ class Config(BaseModel):
     poll_time_minutes: int = 5
     hevy_identification: str = "Logged with Hevy"
     progressive_overload_truncation: int = 20
+    model: str = "mistral:7b-instruct-q4_K_M"
+    measures = Measures()
 
     def save(self, filepath: str | Path = CONFIG_PATH) -> None:
         """Save configuration to a JSON file."""

@@ -6,7 +6,7 @@ from openai import OpenAI
 import markdown
 from mailer import Mailer
 import auth.models as models
-client = OpenAI(api_key=getenv("LLM_API_KEY", "ollama"), base_url="http://localhost:11434/v1")
+client = OpenAI(api_key=getenv("LLM_API_KEY", "ollama"), base_url=getenv("LLM_BASE_URL","http://192.168.1.55:8080/v1"))
 
 def analyze_report(report: Report, model: str = "deepseek-coder-v2:16b") -> str: # mistral:7b-instruct-q4_K_M for testing
     workout_text = report_to_text(report)
@@ -18,8 +18,8 @@ You are a professional fitness coach. Analyze the following workout report and p
 - Give tips on reps, sets, or weight adjustments
 
 The trainee measures are:
-Bodyweight: 47kg
-Age: 16y 
+Bodyweight: {models.config.measures.bodyweight}kg
+Age: {models.config.measures.age}y 
 
 Workout Report:
 {workout_text}
