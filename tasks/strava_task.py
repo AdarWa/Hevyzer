@@ -5,18 +5,24 @@ import auth.models as models
 import auth.strava_helper as strava
 import logging
 import hevy_parser as parser
+from stravalib.model import SummaryActivity
+from stravalib.client import Client
 
-def fetch_strava():
+def fetch_strava(limit=3):
     logging.info("Fetching Strava for new activities...")
     client = strava.get_strava_client(models.config.strava_access)
     # after = datetime.datetime.now(datetime.UTC) - datetime.timedelta(minutes=models.config.poll_time_minutes*2)
-    activities = client.get_activities(limit=1)
+    activities = client.get_activities(limit=limit)
     strava.validate_tokens(client, models.config.strava_access)
-    activity = None
-    try:
-        activity = activities.next()
-    except:
-        logging.info("No new activities found.")
+    activities_left = True
+    while activities_left:
+        try:
+            activity = activities.next()
+            process_activity(activity, client)
+        except:
+            activities_left = False
+
+def process_activity(activity: SummaryActivity, client: Client):
     if activity is None:
         return
     if any((report.activity_id == activity.id for report in models.reports.reports)):
@@ -25,7 +31,9 @@ def fetch_strava():
     assert activity.id
     activity = client.get_activity(activity.id)
     assert activity.id
-    assert activity.description
+    if activity.description is None:
+        logging.warning("Found Strava activity without description - skipping...")
+        return
     assert activity.name
     if models.config.hevy_identification not in activity.description:
         logging.warning("Found strava activity without hevy identification - skipping...")
