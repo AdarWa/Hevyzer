@@ -14,6 +14,7 @@ ENV PATH="/root/.local/bin:$PATH"
 
 # Copy dependency file(s) first for caching
 COPY pyproject.toml uv.lock* ./
+RUN mkdir /app/data
 
 # Install dependencies (using uv)
 RUN uv export > requirements.txt \
