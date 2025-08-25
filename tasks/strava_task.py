@@ -44,7 +44,7 @@ def process_activity(activity: SummaryActivity, client: Client):
     report = parser.parse_workout(desc, activity_id=activity.id, name=name, previous_reports=models.reports.reports[:models.config.progressive_overload_truncation])
     models.reports.reports.append(report)
     models.reports.save()
-    Mailer().send("Fill out report notes - Hevyzer", generate_notes_html(report.activity_id), models.config.emails, html=True)
+    Mailer().send(f"Fill out report notes - {report.name}", generate_notes_html(report.activity_id), models.config.emails, html=True)
     
     
 
