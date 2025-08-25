@@ -17,7 +17,7 @@ def index():
 def dashboard():
     if not models.config.strava_access.validate_access():
         return redirect(url_for("routes.index"))
-    return render_template("dashboard.html", emails=models.config.emails, config=models.config)
+    return render_template("dashboard.html", emails=models.config.emails, config=models.config, reports=models.reports.reports)
 
 @bp.route("/update_emails", methods=["POST"])
 def update_emails():
