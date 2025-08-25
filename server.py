@@ -31,7 +31,7 @@ def run():
     if not Path(CONFIG_PATH).exists():
         models.Config.get_default_config().save(CONFIG_PATH)
     if not Path(REPORTS_PATH).exists():
-        models.Config.get_default_config().save(REPORTS_PATH)
+        models.Reports.get_default_reports().save(REPORTS_PATH)
 
     models.reports = models.Reports.load(REPORTS_PATH)
     models.config = models.Config.load(CONFIG_PATH)
