@@ -7,6 +7,7 @@ import logging
 import hevy_parser as parser
 
 def fetch_strava():
+    logging.info("Fetching Strava for new activities...")
     client = strava.get_strava_client(models.config.strava_access)
     # after = datetime.datetime.now(datetime.UTC) - datetime.timedelta(minutes=models.config.poll_time_minutes*2)
     activities = client.get_activities(limit=1)
