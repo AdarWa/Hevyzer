@@ -49,13 +49,13 @@ def fetch_strava_route():
     bg.scheduler.add_job(strava_task.fetch_strava, "date", kwargs={"limit": limit})
     return redirect(url_for("routes.dashboard"))
     
-@bp.route("/logout", methods=["DELETE"])
+@bp.route("/logout", methods=["POST"])
 def logout():
     models.config.strava_access = models.StravaAccess()
     models.config.save()
     return redirect(url_for("routes.index"))
 
-@bp.route("/reset_to_default", methods=["DELETE"])
+@bp.route("/reset_to_default", methods=["POST"])
 def reset():
     models.config = models.Config.get_default_config()
     models.reports = models.Reports.get_default_reports()
