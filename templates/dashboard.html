@@ -8,10 +8,21 @@
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark mb-4">
-    <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1">Hevyzer Dashboard</span>
+  <div class="container-fluid d-flex justify-content-between">
+    <span class="navbar-brand mb-0 h1">Hevyzer Dashboard</span>
+
+    <div class="d-flex">
+      <form action="/logout" method="delete" class="me-2">
+        <button type="submit" class="btn btn-danger">Logout</button>
+      </form>
+
+      <form action="/fetch_strava" method="get">
+        <button type="submit" class="btn btn-primary">Fetch Strava</button>
+      </form>
     </div>
+  </div>
 </nav>
+
 
 <div class="container">
 
