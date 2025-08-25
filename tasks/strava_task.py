@@ -8,8 +8,9 @@ import hevy_parser as parser
 
 def fetch_strava():
     client = strava.get_strava_client(models.config.strava_access)
-    after = datetime.datetime.now(datetime.UTC) - datetime.timedelta(minutes=models.config.poll_time_minutes*2)
-    activities = client.get_activities(limit=1, after=after)
+    # after = datetime.datetime.now(datetime.UTC) - datetime.timedelta(minutes=models.config.poll_time_minutes*2)
+    activities = client.get_activities(limit=1)
+    strava.validate_tokens(client, models.config.strava_access)
     activity = None
     try:
         activity = activities.next()
@@ -17,14 +18,14 @@ def fetch_strava():
         logging.info("No new activities found.")
     if activity is None:
         return
+    if any((report.activity_id == activity.id for report in models.reports.reports)):
+        logging.warning("Found existing strava activity - skipping")
+        return
     assert activity.id
     activity = client.get_activity(activity.id)
     assert activity.id
     assert activity.description
     assert activity.name
-    if any((report.activity_id == activity.id for report in models.reports.reports)):
-        logging.warning("Found existing strava activity - skipping")
-        return
     if models.config.hevy_identification not in activity.description:
         logging.warning("Found strava activity without hevy identification - skipping...")
         return
