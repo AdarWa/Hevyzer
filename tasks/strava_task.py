@@ -9,7 +9,7 @@ from stravalib.model import SummaryActivity
 from stravalib.client import Client
 
 def fetch_strava(limit=3):
-    logging.info("Fetching Strava for new activities...")
+    logging.info(f"Fetching Strava for new activities with limit {limit}...")
     client = strava.get_strava_client(models.config.strava_access)
     # after = datetime.datetime.now(datetime.UTC) - datetime.timedelta(minutes=models.config.poll_time_minutes*2)
     activities = client.get_activities(limit=limit)
