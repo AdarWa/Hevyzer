@@ -47,5 +47,10 @@ def report_notes(report_id):
 def fetch_strava_route():
     limit = request.args.get("limit", 3)
     bg.scheduler.add_job(strava_task.fetch_strava, "date", kwargs={"limit": limit})
-    return "Fetching Strava..."
+    return redirect(url_for("routes.dashboard"))
     
+@bp.route("/logout", methods=["DELETE"])
+def logout():
+    models.config.strava_access = models.StravaAccess()
+    models.config.save()
+    return redirect(url_for("routes.index"))
