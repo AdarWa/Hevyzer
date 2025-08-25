@@ -27,6 +27,8 @@ Workout Notes:
 {report.notes}
 
 Workout Report:
+{report.name} Day
+
 {workout_text}
 
 Please provide a clear, structured analysis, use markdown for clear structure.
