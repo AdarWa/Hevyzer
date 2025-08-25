@@ -54,3 +54,11 @@ def logout():
     models.config.strava_access = models.StravaAccess()
     models.config.save()
     return redirect(url_for("routes.index"))
+
+@bp.route("/reset_to_default", methods=["DELETE"])
+def reset():
+    models.config = models.Config.get_default_config()
+    models.reports = models.Reports.get_default_reports()
+    models.config.save()
+    models.reports.save()
+    return redirect(url_for("routes.index"))
