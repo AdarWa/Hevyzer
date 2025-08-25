@@ -174,7 +174,7 @@
                                 {% if report.llm_output %}
                                     <div class="alert alert-info">
                                         <strong>AI Analysis:</strong><br>
-                                        {{ report.llm_output }}
+                                        {{ report.llm_output | markdown }}
                                     </div>
                                 {% endif %}
                             </div>

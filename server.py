@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 from pathlib import Path
 from flask import Flask
+import markdown
+from markupsafe import Markup
 import auth.models as models
 import auth.strava_helper as strava
 import os
@@ -21,6 +23,13 @@ def run():
     global app
     app = Flask(__name__)
     app.config['SERVER_NAME'] = EXTERNAL_DOMAIN 
+
+    @app.template_filter("markdown")
+    def markdown_filter(text: str):
+        if not text:
+            return ""
+        return Markup(markdown.markdown(text, extensions=["fenced_code", "tables"]))
+
 
     from routes import bp as routes_bp
     from auth.routes import bp as auth_bp
