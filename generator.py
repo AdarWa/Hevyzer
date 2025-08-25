@@ -1,4 +1,3 @@
-# workout_analysis.py
 from os import getenv
 from auth.models import Report
 from hevy_parser import parse_workout, report_to_text
@@ -16,10 +15,13 @@ You are a professional fitness coach. Analyze the following workout report and p
 - Suggest improvements, potential risks, or imbalances
 - Highlight exercises with poor progressive overload
 - Give tips on reps, sets, or weight adjustments
+- Do not tell to seek a professional coach - give the tips yourself.
+- Imporve the exercises and change the routine if needed.
 
-The trainee measures are:
+my measures are:
 Bodyweight: {models.config.measures.bodyweight}kg
 Age: {models.config.measures.age}y 
+Experience: {models.config.measures.experience}y
 
 Workout Notes:
 {report.notes}
@@ -43,7 +45,9 @@ Please provide a clear, structured analysis, use markdown for clear structure.
 def send_report(report: Report, model: str = "mistral:7b-instruct-q4_K_M"):
     analyzed = analyze_report(report, model)
     final = "# Hevyzer Report for " + report.name + "\n\n" + analyzed
-    Mailer().send("Hevyzer Report", markdown.markdown(final), models.config.emails, html=True)
+    report.llm_output = final
+    models.reports.save()
+    Mailer().send(f"Hevyzer Report - {report.name}", markdown.markdown(final), models.config.emails, html=True)
 
 if __name__ == "__main__":
     workout_text = """Triceps Rope Pushdown
