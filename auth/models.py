@@ -59,10 +59,12 @@ class Report(BaseModel):
     notes: str
     name: str
     exercises: List[Exercise] = []
+    llm_output: str = ""
     
 class Measures(BaseModel):
     age: int = 16
     bodyweight: int = 47 # kg
+    experience: float = 1.2 # years
 
 class Config(BaseModel):
     strava_access: StravaAccess = StravaAccess()
