@@ -45,6 +45,7 @@ def report_notes(report_id):
     
 @bp.route("/fetch_strava")
 def fetch_strava_route():
-    bg.scheduler.add_job(strava_task.fetch_strava, "date")
+    limit = request.args.get("limit", 3)
+    bg.scheduler.add_job(strava_task.fetch_strava, "date", kwargs={"limit": limit})
     return "Fetching Strava..."
     
