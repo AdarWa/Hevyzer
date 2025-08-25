@@ -56,13 +56,58 @@
 
     <!-- Report Settings -->
     <div class="card mb-4">
-        <div class="card-header">Report Settings</div>
-        <div class="card-body">
-            <form method="POST" action="{{ url_for('routes.update_settings') }}">
-                <button type="submit" class="btn btn-success">Save Settings</button>
-            </form>
-        </div>
+    <div class="card-header">Report Settings</div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('routes.update_settings') }}">
+            <div class="mb-3">
+                <label for="poll_time_minutes" class="form-label">Poll Time (minutes)</label>
+                <input type="number" class="form-control" id="poll_time_minutes" name="poll_time_minutes"
+                       value="{{ config.poll_time_minutes }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="hevy_identification" class="form-label">Hevy Identification</label>
+                <input type="text" class="form-control" id="hevy_identification" name="hevy_identification"
+                       value="{{ config.hevy_identification }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="progressive_overload_truncation" class="form-label">Progressive Overload Truncation</label>
+                <input type="number" class="form-control" id="progressive_overload_truncation"
+                       name="progressive_overload_truncation"
+                       value="{{ config.progressive_overload_truncation }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="model" class="form-label">Model</label>
+                <input type="text" class="form-control" id="model" name="model"
+                       value="{{ config.model }}">
+            </div>
+
+            <h5 class="mt-4">Measures</h5>
+            <div class="mb-3">
+                <label for="age" class="form-label">Age</label>
+                <input type="number" class="form-control" id="age" name="age"
+                       value="{{ config.measures.age }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="bodyweight" class="form-label">Bodyweight (kg)</label>
+                <input type="number" class="form-control" id="bodyweight" name="bodyweight"
+                       value="{{ config.measures.bodyweight }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="experience" class="form-label">Experience (years)</label>
+                <input type="number" step="0.1" class="form-control" id="experience" name="experience"
+                       value="{{ config.measures.experience }}" required>
+            </div>
+
+            <button type="submit" class="btn btn-success">Save Settings</button>
+        </form>
     </div>
+</div>
+
 
     <!-- Past Reports -->
     <div class="card mb-4">

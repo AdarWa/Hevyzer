@@ -1,3 +1,4 @@
+import logging
 from flask import Blueprint, redirect, render_template, url_for, request
 import auth.models as models
 import generator
@@ -16,7 +17,7 @@ def index():
 def dashboard():
     if not models.config.strava_access.validate_access():
         return redirect(url_for("routes.index"))
-    return render_template("dashboard.html", emails=models.config.emails)
+    return render_template("dashboard.html", emails=models.config.emails, config=models.config)
 
 @bp.route("/update_emails", methods=["POST"])
 def update_emails():
@@ -25,9 +26,27 @@ def update_emails():
     models.config.save()
     return redirect(url_for("routes.dashboard"))
 
-@bp.route("/update_settings")
+@bp.route("/update_settings", methods=["POST"])
 def update_settings():
-    return "TODO", 418
+    try:
+        models.config.poll_time_minutes = int(request.form["poll_time_minutes"])
+        models.config.hevy_identification = request.form["hevy_identification"]
+        models.config.progressive_overload_truncation = int(request.form["progressive_overload_truncation"])
+        models.config.model = request.form["model"]
+
+        # Update measures
+        models.config.measures = models.Measures(
+            age=int(request.form["age"]),
+            bodyweight=int(request.form["bodyweight"]),
+            experience=float(request.form["experience"]),
+        )
+
+        models.config.save()
+
+    except Exception as e:
+        logging.exception(f"Exception while updating settings: {str(e)}")
+
+    return redirect(url_for("routes.dashboard"))
 
 @bp.route("/report_notes/<int:report_id>", methods=["GET", "POST"])
 def report_notes(report_id):
